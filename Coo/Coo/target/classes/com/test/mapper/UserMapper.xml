@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.UserMapper">
+    <!-- 添加用户 -->
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="userId" 
+        parameterType="User">
+        INSERT INTO auth_user(vUserName,cPassword,cPasswordSalt) 
+        	VALUES(#{userName},#{password},#{passwordSalt})
+    </insert>
+    
+    <!-- 删除用户 -->
+    <delete id="deleteUser" parameterType="long">
+        DELETE FROM auth_user WHERE bUserId = #{_parameter}
+    </delete>
+    <!-- 用户实体结果映射 -->
+    <resultMap type="User" id="userResult">
+        <id property="userId" column="bUserId"/>
+        <result property="userName" column="vUserName"/>
+        <result property="password" column="cPassword"/>
+        <result property="passwordSalt" column="cPasswordSalt"/>
+        <result property="gender" column="gender"/>
+        <result property="status" column="status"/>
+        <result property="country" column="country"/>
+        <result property="bcity" column="bcity"/>
+        <result property="telep" column="telep"/>
+        <result property="email" column="email"/>
+        <result property="birthy" column="birthy"/>
+    </resultMap>
+ 
+    <!--根据名字查询用户-->
+    <select id="findUserByUserName" parameterType="string" 
+        resultMap="userResult">
+        SELECT * FROM auth_user 
+        	WHERE vUserName = #{_parameter}
+    </select>
+    <!-- findImgUrl -->
+    <select id="findImgUrl" parameterType="String" resultType="String">
+    	select img from auth_user where vUserName=#{username}
+    </select>
+    <!-- 查询所有用户 -->
+    <select id="findAllUsers" 
+        resultMap="userResult">
+        SELECT * FROM auth_user 
+    </select>
+    <!-- 删除用户角色关联 -->
+    <delete id="deleteUserRole" parameterType="long">
+        DELETE FROM auth_user_role 
+        	WHERE bUserId = #{_parameter}
+    </delete>
+    <!-- 添加用户角色关联 -->
+    <insert id="addUserRole" parameterType="UserRole">
+        INSERT INTO auth_user_role(bUserId,bRoleId) 
+        	VALUES(#{userId},#{roleId})
+    </insert>
+    <!-- 根据用户名字查询相应角色 -->
+    <select id="findRolesByUserName" parameterType="string" resultType="string">
+        SELECT r.vRoleCode 
+	        FROM auth_user u,auth_role r,auth_user_role ur 
+	        	WHERE u.vUserName = #{_parameter} 
+	        		AND u.bUserId = ur.bUserId 
+	        			AND ur.bRoleId = r.bRoleId
+    </select>
+    <!-- 根据用户名字查询相应权限 -->
+    <select id="findPermissionsByUserName" parameterType="string" resultType="string">
+        SELECT p.vPermissionCode 
+        	FROM auth_user u,auth_role r,auth_user_role ur,auth_permission p,auth_role_permission rp 
+        		WHERE u.vUserName = #{_parameter} 
+        			AND u.bUserId = ur.bUserId 
+	        			AND ur.bRoleId = r.bRoleId 
+	        				AND r.bRoleId = rp.bRoleId 
+	        					AND rp.bPermissionId = p.bPermissionId 
+    </select>
+    <select id="selectFlag" parameterType="string" resultType="int">
+    	select flag_id from auth_user where vUserName = #{userName}
+    </select>
+    <!-- modifyPwd -->
+     <update id="modifyPwd" parameterType="User" >
+    update auth_user set cPassword=#{cPassword} where vUserName=#{vUserName}
+    </update>
+    <!-- selectUsers -->
+    <select id="selectUsers" resultMap="userResult">
+      select * from auth_user where flag_id='1'
+    </select>
+    <!-- updateUserStatus -->
+    <update id="updateUserStatus" parameterType="User">
+    update auth_user set status=#{status} where vUserName=#{userName}
+    </update>
+    <!-- selectUser -->
+    <select id="selectUser" resultMap="userResult" parameterType="String">
+     	select * from auth_user where vUserName=#{userName}
+    </select>
+    <!-- selectExperience -->
+    <select id="selectExperience" resultType="Experience" parameterType="String">
+    	select * from tb_experience where userName=#{userName}
+    </select>
+    <!-- selectEducation -->
+    <select id="selectEducation" resultType="Education" parameterType="String">
+    	select * from tb_education where userName=#{userName}
+    </select>
+    <!-- selectListEducation -->
+    <select id="selectListEducation" resultType="Education">
+    	select * from tb_education
+    </select>
+    <!--  selectNote -->
+    <select id="selectNote" resultType="Note2">
+    	select b.img,a.note_author,a.note_content,a.note_id,a.note_time,a.note_title,a.`status` from auth_user b left join tb_note a on a.note_author=b.vUserName where a.status='1'
+    </select>
+    <!-- selectDetailNote -->
+     <select id="selectDetailNote" parameterType="Integer"  resultType="Note2">
+	   select * from tb_note where note_id=#{note_id}
+    </select>
+     <insert id="insertNote" parameterType="Note2">
+    insert into tb_note(note_title,note_content,note_time,note_author,status)
+    values(#{note_title},#{note_content},#{note_time},#{note_author},#{status})
+    </insert>
+    <!-- selectResume -->
+    <select id="selectResume" parameterType="String" resultType="HireAndResume">
+      select a.company_name,b.post_name,a.`status` FROM tb_hire as a LEFT JOIN tb_post as b on a.post_id=b.post_id where a.userName=#{userName}
+    </select>
+</mapper>

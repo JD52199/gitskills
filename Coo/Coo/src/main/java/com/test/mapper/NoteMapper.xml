@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.NoteMapper">
+    
+ <!-- showNotes -->
+ <select id="showNotes" resultType="Note2">
+    select * from tb_note
+ </select>
+ <!-- noteDetail -->
+ <select id="noteDetail" parameterType="Integer" resultType="Note2">
+ 	select * from tb_note where note_id=#{note_id}
+ </select>
+ <!-- modifyNoteStatus -->
+ <update id="modifyNoteStatus" parameterType="Note2">
+ update tb_note set status=#{status} where note_id=#{note_id}
+ </update>
+</mapper>

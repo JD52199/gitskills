@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.mapper.ResumeMapper" >
+
+  <update id="updateUserInfo" parameterType="Demo">
+	   update auth_user as a
+		SET
+			a.vUserName = #{vUserName},
+			a.bcity = #{bcity},
+			a.gender = #{gender},
+			a.country = #{country},
+			a.email = #{email},
+			a.telep = #{telep},
+			a.birthday = #{birthday}
+		where a.bUserId = #{bUserId}
+    </update> 
+    <select id="selectById" parameterType="long" resultType="Demo">
+    	select * from auth_user where bUserId = #{bUserId}
+    </select>
+   	<select id="selectByUserName" parameterType="string" resultType="Demo">
+   		select * from auth_user where vUserName = #{username}
+   	</select>
+  	<select id="selectExtById" parameterType="long" resultType="Ext">
+   		
+   		select a.except_id,a.bUserId,a.job,a.cty,a.`day`,a.begin_year,a.begin_month,a.end_year,a.end_month,a.sly,a.repy,a.repm,a.repd 
+   		from tb_except as a left join auth_user as b on a.bUserId = b.bUserId
+		where b.bUserId = #{bUserId};
+   	
+   	</select>
+   	 <update id="updateExtInfo" parameterType="Ext">
+	  update tb_except as a 
+		set 
+	    a.cty=#{cty},
+	    a.job = #{job},
+		a.begin_year = #{begin_year},
+		a.begin_month = #{begin_month},
+		a.end_year = #{end_year},
+		a.end_month = #{end_month},
+		a.sly = #{sly},
+		a.repy = #{repy},
+		a.repm = #{repm},
+		a.repd = #{repd},
+		a.`day` = #{day}
+		where a.except_id = #{except_id}
+    </update> 
+    <select id="selectByExtId" parameterType="int" resultType="Ext">
+    	select * from tb_except where except_id = #{except_id}
+    </select>
+    <select id="selelectByUsername" parameterType="String" resultType="Integer">
+    	select bUserId from auth_user where vUserName = #{username}
+    </select>
+    <!-- selectCompanyName -->
+    <select id="selectCompanyName" parameterType="Integer" resultType="String">
+    	select company_name from tb_post where post_id=#{post_id}
+    </select>
+    <!-- insertHire -->
+   <insert id="insertHire" parameterType="Hire">
+    insert into tb_hire(company_name,userName,post_id,status) values(#{company_name},#{userName},#{post_id},#{status})
+   </insert>
+<!-- modifyUserInfor -->
+<update id="modifyUserInfor" parameterType="User">
+ update auth_user set telep=#{telep},email=#{email},status=#{status} where vUserName=#{userName}
+
+</update>
+<!-- modifyExperience -->
+<update id="modifyExperience" parameterType="Experience">
+ update tb_experience set oldcompany_name=#{oldcompany_name},experience_job=#{experience_job},experience_time=#{experience_time},experience_location=#{experience_location},experience_duty=#{experience_duty} where userName=#{userName}
+
+</update>
+<!-- modifyEducation -->
+<update id="modifyEducation" parameterType="Education">
+ update tb_education set education_school=#{education_school},education_time=#{education_time},education_education=#{education_education},education_major=#{education_major},education_majortype=#{education_majortype},education_list=#{education_list},education_course=#{education_course},education_honor=#{education_honor},status=#{status} where userName=#{userName} 
+</update>
+
+<select id="selectHireAndResume" parameterType="String" resultType="CheckResume">
+	SELECT * from tb_experience as a  LEFT JOIN tb_education as b on a.userName=b.userName LEFT JOIN auth_user as c on b.userName=c.vUserName where b.userName = #{username_demoid}
+</select>
+<!-- modifyEducationStatus -->
+<update id="modifyEducationStatus" parameterType="Education">
+   update tb_education set status=#{status} where education_id=#{education_id}
+
+</update>
+</mapper>

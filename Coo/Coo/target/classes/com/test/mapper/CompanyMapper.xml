@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.CompanyMapper">
+    
+    <select id="selectPostList" resultType="Post" parameterType="String">
+    	select * from tb_post where company_name=#{company_name}
+    </select>
+    
+     <select id="selectPostDetailById" parameterType="int" resultType="Post">
+  <!--    SELECT * FROM tb_post as a LEFT JOIN auth_user as b  on a.company_name=b.vUserName where a.post_id=#{post_id} -->
+    	select * from tb_post where post_id = #{post_id}
+    </select>
+    
+    <update id="updatePostInfo" parameterType="Post">
+    	 UPDATE tb_post SET
+        	post_name = #{post_name},
+        	post_type = #{post_type},
+        	post_location = #{post_location},
+        	post_salary = #{post_salary},
+        	post_education = #{post_education},
+        	post_publish = #{post_publish},
+        	post_correctiontime = #{post_correctiontime},
+        	practice_time = #{practice_time},
+        	post_worktime = #{post_worktime},
+        	post_benefit = #{post_benefit},
+        	post_duty = #{post_duty},
+        	post_require = #{post_require},
+        	status = #{status}
+        	
+        		WHERE post_id = #{post_id}
+    </update>
+    
+    <delete id="deletePostInfoById" parameterType="int">
+    	 DELETE FROM tb_post WHERE post_id = #{post_id}
+    </delete>
+    
+    <insert id="addPostInfo" parameterType="Post">
+    	INSERT INTO tb_post(post_name,post_type,post_location,post_salary,post_education,post_publish,post_correctiontime,
+    	practice_time,post_worktime,post_benefit,post_duty,post_require,company_name,status) 
+        VALUES(#{post_name},#{post_type},#{post_location},#{post_salary},#{post_education},#{post_publish},#{post_correctiontime},
+        #{practice_time},#{post_worktime},#{post_benefit},#{post_duty},#{post_require},#{company_name},#{status})
+    
+    </insert>
+    <!-- insertImg -->
+    <update id="insertImg" parameterType="User">
+    	update auth_user set img=#{img} where vUserName=#{userName}
+   </update>
+     <update id="ModifyCompanyProfile" parameterType="Company2">
+        	UPDATE tb_companyprofile SET
+        	company_name = #{company_name},
+        	company_culture = #{company_culture},
+        	company_location = #{company_location},
+        	company_numbers = #{company_numbers},
+        	company_type = #{company_type},
+        	company_detaillocation = #{company_detaillocation},
+        	company_registertime = #{company_registertime},
+        	company_capital = #{company_capital},
+        	code=#{code},
+        	status=#{status}
+        	WHERE company_name = #{company_name}
+    </update>
+    
+    <select id="selectCompanyProfile" parameterType="String" resultType="Company2">
+    	select * from tb_companyprofile where company_name = #{company_name}
+    </select>
+    <!-- modifyCompanyPwd -->
+    <update id="modifyCompanyPwd" parameterType="User" >
+    update auth_user set cPassword=#{cPassword} where vUserName=#{vUserName}
+    </update>
+    <!-- selectPwd -->
+    <select id="selectPwd" parameterType="String" resultType="String">
+    select cPassword from auth_user where vUserName=#{vUserName}
+    </select>
+     <select id="selectNote" resultType="Note2">
+	   select b.img,a.note_author,a.note_content,a.note_id,a.note_time,a.note_title,a.`status` from auth_user b left join tb_note a on a.note_author=b.vUserName where a.status='1'
+  </select> 
+     <select id="selectDetailNote" parameterType="Integer"  resultType="Note2">
+	   select * from tb_note where note_id=#{note_id}
+    </select>
+    <insert id="insertNote" parameterType="Note2">
+    insert into tb_note(note_title,note_content,note_time,note_author,status)
+    values(#{note_title},#{note_content},#{note_time},#{note_author},#{status})
+    </insert>
+    <!--insertComment -->
+    <insert id="insertComment" parameterType="Comment2">
+      insert into tb_comment(comment_content,comment_time,comment_name,note_id)values
+      (#{comment_content},#{comment_time},#{comment_name},#{note_id})
+    </insert>
+    <!-- showComment -->
+    <select id="showComment" parameterType="Integer" resultType="Comment2">
+    select * from tb_comment where note_id=#{note_id} ORDER BY comment_time DESC
+    </select>
+    <!-- showCompanyList -->
+    <select id="showCompanyList" resultType="Company2">
+    select * from tb_companyprofile
+    </select>
+    <!-- modifyCompanyStatus -->
+    <update id="modifyCompanyStatus" parameterType="Company2">
+    update tb_companyprofile set status=#{status} where profile_id=#{profile_id}
+    </update>
+    <select id="selectImg" parameterType="String" resultType="Note2">
+    	select b.img from auth_user b left join tb_note a on a.note_author=b.vUserName where a.note_author=#{note_author}
+    </select>
+    <!-- selectHireAndResume -->
+    <!-- LEFT JOIN tb_post as e on d.company_name=e.company_name -->
+      <select id="selectHireAndResume" parameterType="String" resultType="HireAndResume">
+    	<!-- select d.`status`,d.hire_id,d.post_id,b.userName,a.gender,a.country,a.telep,a.email,b.experience_duty,b.experience_job,b.experience_location,b.experience_time,c.education_school,c.education_course,c.education_major  from auth_user as a LEFT JOIN tb_experience as b on a.vUserName=b.userName LEFT JOIN tb_education as c on b.userName=c.userName LEFT JOIN tb_hire as d ON c.userName=d.userName WHERE company_name=#{company_name}
+    	 -->
+    	 select d.`status`,d.hire_id,d.post_id,b.userName,a.gender,a.country,a.telep,a.email,b.experience_duty,b.experience_job,b.experience_location,b.experience_time,c.education_school,c.education_course,c.education_major,e.post_name  from auth_user as a LEFT JOIN tb_experience as b on a.vUserName=b.userName LEFT JOIN tb_education as c on b.userName=c.userName LEFT JOIN tb_hire as d ON c.userName=d.userName LEFT JOIN tb_post as e on d.company_name=e.company_name WHERE e.company_name=#{company_name}
+    	 
+    	 
+    </select>
+    <!-- companyIsexists -->
+    <select id="companyIsexists" parameterType="String" resultType="Company2">
+    	select * from tb_companyprofile where company_name=#{userName}
+    </select>
+    <!-- insertCompanyProfile -->
+    <insert id="insertCompanyProfile" parameterType="Company2">
+       insert into tb_companyprofile(company_name,company_culture,company_location,company_numbers,company_type,company_detaillocation,company_registertime,company_capital,status,code,img)values(#{company_name},#{company_culture},#{company_location},#{company_numbers},#{company_type},#{company_detaillocation},#{company_registertime},#{company_capital},#{status},#{code},#{img})
+    </insert>
+    <!-- modifyResume -->
+    <update id="modifyResume" parameterType="Hire">
+      update tb_hire set status=#{status} where hire_id=#{hire_id}
+    </update>
+    
+    <select id="selectByHireId" parameterType="string" resultType="string">
+    	select userName from tb_hire where hire_id = #{hire_id}
+    </select>
+    <select id="selectEmailByUsername" parameterType="string" resultType="string">
+    	select email from auth_user where vUserName = #{userName}
+    </select>
+    
+    <select id="selectStatusByHireId" parameterType="string" resultType="string">
+    	select status from tb_hire where hire_id = #{hire_id}
+    </select>
+    
+    
+</mapper>

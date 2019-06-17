@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.mapper.PostMapper" >
+
+  <select id="selectPostByType" parameterType="Post"  resultType="PostAndCompany">
+	   select a.post_id,b.company_name,b.company_type, a.post_name,a.post_location,a.comm,a.practice_time,a.post_worktime
+	   from tb_post as a LEFT JOIN 
+	   tb_companyprofile as b on a.post_id = b.post_id
+    </select> 
+     <select id="selectPostLike" parameterType="Post"  resultType="PostAndCompany">
+	   select a.post_id,b.company_name,b.company_type, a.post_name,a.post_location,a.comm,a.practice_time,a.post_worktime
+	   from tb_post as a LEFT JOIN 
+	   tb_companyprofile as b on a.post_id = b.post_id WHERE 
+	   <if test="post_location != null">
+	   post_location=#{post_location}
+	   </if>
+	   <if test="practice_time != null">
+	   practice_time=#{practice_time}
+	   </if>
+    </select> 
+    <select id="selectPostById" parameterType="string"  resultType="PostAndCompany">
+    select a.post_id,a.post_publish,b.company_name,a.post_benefit,a.post_require,a.post_duty,a.post_education, b.company_culture,b.profile_id, b.company_location, b.company_type, a.post_name,a.post_location,a.comm,a.practice_time,a.post_worktime
+	   from tb_post as a LEFT JOIN 
+	   tb_companyprofile as b on a.post_id = b.post_id where a.post_id= #{post_id}
+    </select>
+    <!-- selectPostList -->
+    <select id="selectPostList" resultType="Post">
+      select * from tb_post
+    </select>
+    <!-- modifyPostStatus -->
+    <update id="modifyPostStatus" parameterType="Post">
+       update tb_post set status=#{status} where post_id=#{post_id}
+    </update>
+    
+    <select id="showAllPost" parameterType="Post" resultType="PostAndCompany" >
+	    select *
+	    from tb_post where post_type = #{post_type} and status='1'
+	    <!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+    </select>
+    <select id="showAllRecPost" parameterType="Post" resultType="PostAndCompany">
+    	select *
+	    from tb_post where recruit_type = #{recruit_type} and status='1'
+	    <!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+    </select>
+    <select id="selectPostListCount" resultType="int" parameterType="Post">
+    	select count(*) from tb_post where post_type=#{post_type} and status=#{status}
+    </select>
+     <select id="selectPostCount" resultType="int" parameterType="Post">
+    	select count(*) from tb_post where recruit_type=#{recruit_type} and status=#{status}
+    </select>
+    <select id="showAllSearchPost" parameterType="Post" resultType="PostAndCompany">
+    	SELECT * FROM tb_post WHERE  CONCAT(`post_name`,`company_name`) LIKE '%${key}%'
+    	<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+    </select>
+    
+    
+    <!--权限实体结果映射 
+    <resultMap type="Post" id="PostAndCompanyResult">
+        <id property="post_id" column="post_id"/>
+        <result property="post_name" column="post_name"/>
+        <result property="post_location" column="post_location"/>
+        <result property="comm" column="comm"/>
+        <result property="practice_time" column="practice_time"/>
+        <result property="company_name" column="company_name"/>
+        <result property="company_type" column="company_type"/>
+    </resultMap>-->
+ <!--     查询全部评论 
+    <select id="selectPost" parameterType="String"  resultType="post">
+	    select *
+	    from tb_post where post_name=#{post_name}
+    </select>
+    <select id="selectPostById" parameterType="Integer"  resultType="post">
+	    select *
+	    from tb_post where post_id=#{post_id}
+    </select>
+    <select id="selectPostDetail" parameterType="Integer" resultType="com.test.entity.Post">
+   select *
+ FROM tb_post where post_id=#{post_id};
+
+    
+    </select> -->
+    
+  
+</mapper>

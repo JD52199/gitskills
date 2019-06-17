@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.ImgMapper">
+    
+ <!-- showNotes -->
+ <select id="showImg" resultType="Img">
+    select * from tb_img
+ </select>
+ <!-- modifyNoteStatus -->
+ <insert id="addImg" parameterType="Img">
+ insert into tb_img(img_name,img_url) values(#{name},#{uploadfile})
+ </insert>
+</mapper>
